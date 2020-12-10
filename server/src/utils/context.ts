@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
 export interface context {
-  req: Request & { userId: number };
+  req: Request;
   res: Response;
 }

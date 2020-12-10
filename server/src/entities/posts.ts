@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { User } from './user';
 @ObjectType()
-@Entity()
+@Entity('posts')
 export class Posts extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -22,7 +22,7 @@ export class Posts extends BaseEntity {
   @Column()
   photoPath: string;
 
-  @Field()
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts)
   user: User;
 
