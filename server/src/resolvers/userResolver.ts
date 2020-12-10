@@ -13,6 +13,7 @@ import { context } from '../utils/context';
 import { COOKIE_NAME, __prod__ } from '../utils/constants';
 import { createAccessToken } from '../utils/tokens';
 import { verify } from 'jsonwebtoken';
+import cookies from 'js-cookie';
 @InputType()
 class UserInput {
   @Field()
@@ -72,9 +73,8 @@ export class UserResolver {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
       secure: __prod__,
-      sameSite: 'none',
+      sameSite: 'lax',
     });
-    console.log(res);
     return user;
   }
   @Mutation(() => Boolean)

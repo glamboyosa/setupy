@@ -11,7 +11,12 @@ import { UserResolver } from './resolvers/userResolver';
 (async () => {
   const app = express();
   config();
-  app.use(cors({ credentials: true }));
+  app.use(
+    cors({
+      credentials: true,
+      origin: ['http://localhost:3000', 'http://localhost:8000/graphql'],
+    })
+  );
   app.use(cookieParser());
   await createConnection();
   const apolloServer = new ApolloServer({
