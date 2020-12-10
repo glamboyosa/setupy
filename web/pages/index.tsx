@@ -1,15 +1,36 @@
 import Head from 'next/head';
-import { useHelloQuery } from '../generated/graphql';
-import withApollo from '../libs/withApollo';
+import {
+  Header,
+  PrimaryHeading,
+  SecondaryHeading,
+} from '../components/header.style';
+import {
+  ButtonsParent,
+  PrimaryButton,
+  SecondaryButton,
+} from '../components/button.style';
+import { useRouter } from 'next/dist/client/router';
+
 function Home() {
-  const { data } = useHelloQuery();
+  const router = useRouter();
   return (
     <>
       <Head>
         <title>Setupy - Home</title>
       </Head>
-      <h1>{data?.hello}</h1>
+      <Header>
+        <PrimaryHeading>Setupy - Reddit but for dev setups 🔥</PrimaryHeading>
+        <SecondaryHeading>
+          See what your dev friends are pushing with.
+        </SecondaryHeading>
+        <ButtonsParent>
+          <PrimaryButton onClick={() => router.push('/posts')}>
+            Let's Go
+          </PrimaryButton>
+          <SecondaryButton>Let's Go</SecondaryButton>
+        </ButtonsParent>
+      </Header>
     </>
   );
 }
-export default withApollo({ ssr: true })(Home);
+export default Home;
