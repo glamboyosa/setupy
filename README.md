@@ -13,3 +13,7 @@ A web application that allows users to upload their dev setups + a small descrip
 - Express
 - TypeORM
 - PostgreSQL
+
+### Credit
+
+The GIF used in index is gotten from [Justas Galaburda](https://dribbble.com/shots/4085472-To-the-Stars-and-Beyond)
