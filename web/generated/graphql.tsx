@@ -39,7 +39,7 @@ export type Posts = {
 export type Mutation = {
   __typename?: 'Mutation';
   Register: Scalars['Boolean'];
-  Login: User;
+  Login: UserResponse;
   Logout: Scalars['Boolean'];
 };
 
@@ -60,6 +60,17 @@ export type UserInput = {
   email: Scalars['String'];
 };
 
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  error?: Maybe<Error>;
+  user?: Maybe<User>;
+};
+
+export type Error = {
+  __typename?: 'Error';
+  message: Scalars['String'];
+};
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -69,8 +80,14 @@ export type LoginMutationVariables = Exact<{
 export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { Login: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'username'>
+    { __typename?: 'UserResponse' }
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'username'>
+    )>, error?: Maybe<(
+      { __typename?: 'Error' }
+      & Pick<Error, 'message'>
+    )> }
   ) }
 );
 
@@ -98,9 +115,14 @@ export type HelloQuery = (
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   Login(email: $email, password: $password) {
-    id
-    email
-    username
+    user {
+      id
+      email
+      username
+    }
+    error {
+      message
+    }
   }
 }
     `;

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 export const CenterInputs = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
   & > * {
     margin-bottom: 2.5rem;

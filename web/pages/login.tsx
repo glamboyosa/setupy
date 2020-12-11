@@ -12,6 +12,7 @@ import { LinkToPages } from '../components/links.style';
 import withApollo from '../libs/withApollo';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
   const [loginMutation, { data, loading, error }] = useLoginMutation();
   const [email, setEmail] = useState<string>();
@@ -26,6 +27,7 @@ const Login = () => {
   const notify = (error: string) =>
     toast.error(error, {
       position: 'top-center',
+      type: 'error',
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -33,11 +35,11 @@ const Login = () => {
       draggable: true,
       progress: undefined,
     });
-  if (error) {
-    notify(error.message);
-    console.log(error.message);
+  if (data?.Login.error) {
+    notify(data.Login.error.message);
+    console.log(data.Login.error.message);
   }
-  if (data) {
+  if (data?.Login.user) {
     console.log(data.Login);
   }
   return (
@@ -45,7 +47,18 @@ const Login = () => {
       <Head>
         <title>Setupy - Login</title>
       </Head>
-
+      <ToastContainer
+        position='top-center'
+        style={{ fontSize: '2rem', fontFamily: 'inherit' }}
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <CenterInputs>
         <SecondaryHeading>
           Login to see what your pals are up to
@@ -65,17 +78,6 @@ const Login = () => {
           <LinkToPages>Forgot password.</LinkToPages>
         </Link>
       </CenterInputs>
-      <ToastContainer
-        position='top-center'
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </>
   );
 };
