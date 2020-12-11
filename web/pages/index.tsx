@@ -24,7 +24,7 @@ function Home() {
           See what your dev friends are pushing with.
         </SecondaryHeading>
         <ButtonsParent>
-          <PrimaryButton onClick={() => router.push('/posts')}>
+          <PrimaryButton onClick={() => router.push('/login')}>
             Let's Go
           </PrimaryButton>
           <SecondaryButton>Let's Go</SecondaryButton>
