@@ -13,7 +13,7 @@ import { context } from '../utils/context';
 import { COOKIE_NAME, __prod__ } from '../utils/constants';
 import { createAccessToken } from '../utils/tokens';
 import { verify } from 'jsonwebtoken';
-import cookies from 'js-cookie';
+import { UserResponse } from '../utils/response';
 @InputType()
 class UserInput {
   @Field()
@@ -31,10 +31,10 @@ export class UserResolver {
       const emailExists = await User.findOne({ email });
       const usernameExists = await User.findOne({ username });
       if (emailExists) {
-        throw new Error('User with the given email exists');
+        return false;
       }
       if (usernameExists) {
-        throw new Error('Username is taken');
+        return false;
       }
       const salt = await genSalt(12);
       const hashedPassword = await hash(password, salt);
@@ -44,12 +44,16 @@ export class UserResolver {
         username,
       });
     } catch (e) {
-      throw new Error(e.message);
+      return {
+        error: {
+          message: e.message,
+        },
+      };
     }
 
     return true;
   }
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async Login(
     @Arg('email') email: string,
     @Arg('password') password: string,
@@ -59,15 +63,27 @@ export class UserResolver {
     try {
       const existingUser = await User.findOne({ where: { email } });
       if (!existingUser) {
-        throw new Error('email or password incorrect');
+        return {
+          error: {
+            message: 'email or password incorrect',
+          },
+        };
       }
       const isValidPassword = await compare(password, existingUser.password);
       if (!isValidPassword) {
-        throw new Error('email or password incorrect');
+        return {
+          error: {
+            message: 'email or password incorrect',
+          },
+        };
       }
       user = existingUser;
     } catch (e) {
-      throw new Error(e.message);
+      return {
+        error: {
+          message: e.message,
+        },
+      };
     }
     res.cookie(COOKIE_NAME, createAccessToken(user), {
       httpOnly: true,
@@ -75,7 +91,9 @@ export class UserResolver {
       secure: __prod__,
       sameSite: 'lax',
     });
-    return user;
+    return {
+      user,
+    };
   }
   @Mutation(() => Boolean)
   Logout(@Ctx() { res }: context) {
