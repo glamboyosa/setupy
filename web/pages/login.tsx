@@ -63,8 +63,16 @@ const Login = () => {
         <SecondaryHeading>
           Login to see what your pals are up to
         </SecondaryHeading>
-        <Input type='email' onChange={(e) => setEmail(e.target.value)} />
-        <Input type='password' onChange={(e) => setPassword(e.target.value)} />
+        <Input
+          type='email'
+          placeholder='email'
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          type='password'
+          placeholder='password'
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <ButtonsParent>
           <PrimaryButton disabled={loading} onClick={submitHandler}>
             Let's Go
