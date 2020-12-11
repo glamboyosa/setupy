@@ -38,7 +38,7 @@ export type Posts = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  Register: Scalars['Boolean'];
+  Register?: Maybe<Scalars['Boolean']>;
   Login: UserResponse;
   Logout: Scalars['Boolean'];
 };

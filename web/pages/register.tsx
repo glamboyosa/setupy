@@ -35,7 +35,7 @@ const Register = () => {
       draggable: true,
       progress: undefined,
     });
-  if (!data?.Register) {
+  if (data?.Register === null) {
     notify('uh oh something went wrong. please try again 😢 ');
     console.log(data?.Register);
   }
