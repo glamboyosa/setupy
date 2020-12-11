@@ -1,5 +1,5 @@
 import { CenterInputs, Input } from '../components/input.style';
-import { useLoginMutation } from '../generated/graphql';
+import { useRegisterMutation } from '../generated/graphql';
 import Head from 'next/head';
 import React, { useState } from 'react';
 import {
@@ -13,13 +13,16 @@ import withApollo from '../libs/withApollo';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const Login = () => {
-  const [loginMutation, { data, loading }] = useLoginMutation();
+const Register = () => {
+  const [registerMutation, { data, loading }] = useRegisterMutation();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
+  const [username, setUsername] = useState<string>();
   const submitHandler = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    loginMutation({ variables: { email: email!, password: password! } });
+    registerMutation({
+      variables: { email: email!, password: password!, username: username! },
+    });
   };
   const notify = (error: string) =>
     toast.error(error, {
@@ -32,17 +35,17 @@ const Login = () => {
       draggable: true,
       progress: undefined,
     });
-  if (data?.Login.error) {
-    notify(data.Login.error.message);
-    console.log(data.Login.error.message);
+  if (!data?.Register) {
+    notify('uh oh something went wrong. please try again 😢 ');
+    console.log(data?.Register);
   }
-  if (data?.Login.user) {
-    console.log(data.Login);
+  if (data?.Register) {
+    console.log(data.Register);
   }
   return (
     <>
       <Head>
-        <title>Setupy - Login</title>
+        <title>Setupy - Register</title>
       </Head>
       <ToastContainer
         position='top-center'
@@ -58,8 +61,13 @@ const Login = () => {
       />
       <CenterInputs>
         <SecondaryHeading>
-          Login to see what your pals are up to
+          Register to see what your pals are up to
         </SecondaryHeading>
+        <Input
+          type='text'
+          placeholder='username'
+          onChange={(e) => setUsername(e.target.value)}
+        />
         <Input
           type='email'
           placeholder='email'
@@ -76,8 +84,8 @@ const Login = () => {
           </PrimaryButton>
           <SecondaryButton disabled={loading}>Let's Go</SecondaryButton>
         </ButtonsParent>
-        <Link href='/register'>
-          <LinkToPages>Don't have an account? Sign up.</LinkToPages>
+        <Link href='/login'>
+          <LinkToPages>Already have an account? Sign in.</LinkToPages>
         </Link>
         <Link href='/forgot-password'>
           <LinkToPages>Forgot password.</LinkToPages>
@@ -86,4 +94,4 @@ const Login = () => {
     </>
   );
 };
-export default withApollo({ ssr: false })(Login);
+export default withApollo({ ssr: false })(Register);

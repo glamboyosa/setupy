@@ -25,16 +25,16 @@ class UserInput {
 }
 @Resolver()
 export class UserResolver {
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, { nullable: true })
   async Register(@Arg('UserInput') { username, email, password }: UserInput) {
     try {
       const emailExists = await User.findOne({ email });
       const usernameExists = await User.findOne({ username });
       if (emailExists) {
-        return false;
+        return null;
       }
       if (usernameExists) {
-        return false;
+        return null;
       }
       const salt = await genSalt(12);
       const hashedPassword = await hash(password, salt);
