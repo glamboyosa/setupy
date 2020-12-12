@@ -11,9 +11,13 @@ import { User } from '../entities/user';
 import { hash, genSalt, compare } from 'bcryptjs';
 import { context } from '../utils/context';
 import { COOKIE_NAME, __prod__ } from '../utils/constants';
-import { createAccessToken } from '../utils/tokens';
+import {
+  createAccessToken,
+  forgotPasswordToken as forgotPasswordTokenHandler,
+} from '../utils/tokens';
 import { verify } from 'jsonwebtoken';
 import { UserResponse } from '../utils/response';
+import nodemailer from 'nodemailer';
 @InputType()
 class UserInput {
   @Field()
@@ -100,7 +104,7 @@ export class UserResolver {
     res.clearCookie(COOKIE_NAME);
     return true;
   }
-  @Query(() => User, { nullable: true })
+  @Query(() => UserResponse, { nullable: true })
   async Me(@Ctx() { req }: context) {
     console.log(req.cookies);
     const { jid } = req.cookies;
@@ -115,6 +119,74 @@ export class UserResolver {
     if (!user) {
       return null;
     }
-    return user;
+    return {
+      user,
+    };
+  }
+  @Mutation(() => Boolean, { nullable: true })
+  async ForgotPassword(@Arg('email') email: string) {
+    let user: User;
+    try {
+      const foundUser = await User.findOne({ email });
+      if (!foundUser) {
+        return null;
+      }
+
+      user = foundUser;
+    } catch (e) {
+      return null;
+    }
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USERNAME,
+        pass: process.env.GMAIL_PASSWORD,
+      },
+    });
+    const forgotPasswordToken = forgotPasswordTokenHandler(user);
+    const mailOptions = {
+      from: 'ogbemudiatimothy@gmail.com',
+      to: user?.email,
+      subject: 'Forgot Password',
+      text: `forgot password reset link: http://localhost:3000/forgot-password/${forgotPasswordToken}`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, _) {
+      if (error) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    return true;
+  }
+  @Mutation(() => Boolean, { nullable: true })
+  async ChangePassword(
+    @Arg('token') token: string,
+    @Arg('newPassword') newPassword: string
+  ) {
+    const forgotPasswordToken = verify(
+      token,
+      process.env.FORGOT_PASSWORD_TOKEN!
+    ) as any;
+    if (!forgotPasswordToken) {
+      return null;
+    }
+    if (Date.now() > forgotPasswordToken.exp) {
+      return null;
+    }
+    try {
+      const user = await User.findOne({ id: forgotPasswordToken.userId });
+      if (!user) {
+        return null;
+      }
+      const salt = await await genSalt(12);
+      const hashedPassword = await hash(newPassword, salt);
+      user.password = hashedPassword;
+      user.save();
+    } catch (e) {
+      return null;
+    }
+    return true;
   }
 }
