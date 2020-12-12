@@ -1,6 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
 const globalStyle = createGlobalStyle`
-@import url('https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap');
 :root {
   --white-shade: #fafafa;
   --black: #000000;
