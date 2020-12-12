@@ -11,9 +11,15 @@ import { SecondaryHeading } from '../components/header.style';
 import { LinkToPages } from '../components/links.style';
 import withApollo from '../libs/withApollo';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const Login = () => {
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+type ReferrerisRegister = boolean | undefined;
+const Login = ({
+  referrerIsRegister,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const router = useRouter();
   const [loginMutation, { data, loading }] = useLoginMutation();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
@@ -34,10 +40,11 @@ const Login = () => {
     });
   if (data?.Login.error) {
     notify(data.Login.error.message);
-    console.log(data.Login.error.message);
   }
-  if (data?.Login.user) {
-    console.log(data.Login);
+  if (data?.Login.user && !referrerIsRegister) {
+    router.back();
+  } else if (data?.Login.user && referrerIsRegister) {
+    router.push('/');
   }
   return (
     <>
@@ -85,5 +92,15 @@ const Login = () => {
       </CenterInputs>
     </>
   );
+};
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const referrerIsRegister: ReferrerisRegister = context.req.headers.referer?.includes(
+    'register'
+  );
+  return {
+    props: {
+      referrerIsRegister,
+    },
+  };
 };
 export default withApollo({ ssr: false })(Login);

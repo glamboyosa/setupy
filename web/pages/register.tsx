@@ -13,8 +13,10 @@ import withApollo from '../libs/withApollo';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/router';
 const Register = () => {
   const [registerMutation, { data, loading }] = useRegisterMutation();
+  const router = useRouter();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [username, setUsername] = useState<string>();
@@ -40,7 +42,7 @@ const Register = () => {
     console.log(data?.Register);
   }
   if (data?.Register) {
-    console.log(data.Register);
+    router.back();
   }
   return (
     <>
