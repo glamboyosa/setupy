@@ -170,12 +170,9 @@ export class UserResolver {
       process.env.FORGOT_PASSWORD_TOKEN!
     ) as any;
     if (!forgotPasswordToken) {
-      console.log('huh');
       return null;
     }
     if (Date.now() >= forgotPasswordToken.exp * 1000) {
-      console.log(forgotPasswordToken.exp);
-      console.log('huhhhh');
       return null;
     }
     try {
@@ -186,7 +183,7 @@ export class UserResolver {
       const salt = await await genSalt(12);
       const hashedPassword = await hash(newPassword, salt);
       user.password = hashedPassword;
-      user.save();
+      await user.save();
     } catch (e) {
       return null;
     }

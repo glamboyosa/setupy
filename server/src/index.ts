@@ -18,6 +18,7 @@ import { UserResolver } from './resolvers/userResolver';
     })
   );
   app.use(cookieParser());
+  app.use(express.static('images'));
   await createConnection();
   const apolloServer = new ApolloServer({
     introspection: true,
