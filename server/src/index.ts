@@ -20,6 +20,7 @@ import { UserResolver } from './resolvers/userResolver';
   app.use(cookieParser());
   await createConnection();
   const apolloServer = new ApolloServer({
+    introspection: true,
     schema: await buildSchema({
       resolvers: [HelloResolver, UserResolver],
       validate: false,
