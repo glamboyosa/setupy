@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import { NextSeo } from 'next-seo';
-import { SecondaryHeading } from '../../components/header.style';
+import {
+  PrimaryHeading,
+  SecondaryHeading,
+} from '../../components/header.style';
 import { LinkToPages } from '../../components/links.style';
 import {
   CenterPosts,
@@ -12,7 +15,9 @@ import {
   ShareButton,
   UpButton,
   Page,
+  MarginTopImage,
 } from '../../components/posts.style';
+import React from 'react';
 const Posts = () => {
   const description = [
     'A super big Mac setup with 55" monitor!',
@@ -38,22 +43,31 @@ const Posts = () => {
         twitter={{ cardType: 'summary_large_image' }}
       />
       <Page>
+        <CenterPosts>
+          <PrimaryHeading>See the hottest posts 🔥</PrimaryHeading>
+        </CenterPosts>
         {description.map((el) => (
           <CenterPosts>
-            <EitherSideofPost>
-              <UpButton />
-              <DownButton />
-              <ShareButton />
-            </EitherSideofPost>
-            <EitherSideofPost>
-              <Post>
-                <DemoImage src='/test.jpg_medium' width='70%' />
+            <Post>
+              <EitherSideofPost>
+                <UpButton spellCheck={false} />
+                <DownButton spellCheck={false} />
+                <ShareButton />
+              </EitherSideofPost>
+              <EitherSideofPost>
+                <MarginTopImage>
+                  <DemoImage
+                    src='/test.jpg_medium'
+                    width='auto'
+                    height='auto'
+                  />
+                </MarginTopImage>
                 <SecondaryHeading>{el}</SecondaryHeading>
                 <Link href={`/posts/${el}`}>
                   <LinkToPages>post by glamboyosa</LinkToPages>
                 </Link>
-              </Post>
-            </EitherSideofPost>
+              </EitherSideofPost>
+            </Post>
           </CenterPosts>
         ))}
       </Page>
