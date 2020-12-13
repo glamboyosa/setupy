@@ -1,0 +1,10 @@
+mutation CreatePost($picture: Upload!, $description: String!, $userId: Float!) {
+  CreatePosts(picture: $picture, description: $description, userId: $userId) {
+    error {
+      message
+    }
+    post {
+      ...Post
+    }
+  }
+}

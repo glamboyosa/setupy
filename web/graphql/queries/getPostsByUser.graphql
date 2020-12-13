@@ -1,0 +1,10 @@
+query GetPostsByUser($id: Float!) {
+  GetPostsByUser(id: $id) {
+    error {
+      message
+    }
+    post {
+      ...Post
+    }
+  }
+}

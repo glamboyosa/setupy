@@ -1,0 +1,16 @@
+query GetPosts {
+  GetPosts {
+    error {
+      message
+    }
+    posts {
+      id
+      description
+      photoPath
+      votes
+      user {
+        username
+      }
+    }
+  }
+}
