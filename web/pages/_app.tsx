@@ -1,5 +1,6 @@
 import { AppProps } from 'next/dist/next-server/lib/router/router';
 import Head from 'next/head';
+import UserProvider from '../libs/userProvider';
 import GlobalStyles from '../styles/globalStyle';
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -12,8 +13,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           rel='stylesheet'
         />
       </Head>
-      <GlobalStyles />
-      <Component {...pageProps} />
+      <UserProvider>
+        <GlobalStyles />
+        <Component {...pageProps} />
+      </UserProvider>
     </>
   );
 }
