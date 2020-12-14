@@ -1,5 +1,13 @@
-mutation CreatePost($picture: Upload!, $description: String!, $userId: Float!) {
-  CreatePosts(picture: $picture, description: $description, userId: $userId) {
+mutation CreatePost(
+  $picture: String!
+  $description: String!
+  $username: String!
+) {
+  CreatePosts(
+    picture: $picture
+    description: $description
+    username: $username
+  ) {
     error {
       message
     }

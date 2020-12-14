@@ -1,5 +1,5 @@
-query GetPostsByUser($id: Float!) {
-  GetPostsByUser(id: $id) {
+query GetPostsByUser($username: String!) {
+  GetPostsByUser(username: $username) {
     error {
       message
     }

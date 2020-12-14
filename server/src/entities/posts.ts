@@ -22,9 +22,9 @@ export class Posts extends BaseEntity {
   @Column()
   photoPath: string;
 
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts)
-  user: User;
+  @Field()
+  @Column()
+  username: string;
 
   @Field()
   @Column({ default: 0 })

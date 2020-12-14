@@ -22,10 +22,11 @@ export class PostsResolver {
     };
   }
   @Query(() => PostsResponse)
-  async GetPostsByUser(@Arg('id') id: number) {
+  async GetPostsByUser(@Arg('username') username: string) {
     let posts: Posts[];
     try {
-      const user = await User.findOne({ where: { id } });
+      const userPosts = await Posts.find({ where: { username } });
+      const user = await User.findOne({ where: { username } });
       if (!user) {
         return {
           error: {
@@ -33,15 +34,14 @@ export class PostsResolver {
           },
         };
       }
-      if (!user.posts || user.posts.length < 1) {
+      if (userPosts.length < 1) {
         return {
           error: {
-            message: 'Sorry user has no posts :/',
+            message: 'Sorry the user has no posts :/',
           },
         };
       }
-
-      posts = user.posts;
+      posts = userPosts;
     } catch (e) {
       return {
         error: {
@@ -55,16 +55,16 @@ export class PostsResolver {
   }
   @Mutation(() => PostsResponse)
   async CreatePosts(
-    @Arg('picture', () => GraphQLUpload)
-    { createReadStream, filename }: Upload,
+    @Arg('picture') picture: string,
     @Arg('description') description: string,
-    @Arg('userId') userId: number
+    @Arg('username') username: string
   ) {
     let user: User;
+    let newPost: Posts;
     // send in user's ID to test bc it isn't setting a cookie on the server
     // eventually replace with a `Me` Query or alternatively run me query when the modal is rendered and pass in userId
     try {
-      const existingUser = await User.findOne({ where: { id: userId } });
+      const existingUser = await User.findOne({ where: { username } });
       if (!existingUser) {
         return {
           error: {
@@ -79,7 +79,25 @@ export class PostsResolver {
           },
         };
       }
+
       user = existingUser;
+      console.log(user);
+      const post = await Posts.insert({
+        description,
+        photoPath: picture,
+        username,
+      });
+      const recentPost = await Posts.findOne({
+        where: { id: post.generatedMaps[0].id },
+      });
+      if (!recentPost) {
+        return {
+          error: {
+            message: 'failed to insert post',
+          },
+        };
+      }
+      newPost = recentPost;
     } catch (e) {
       return {
         error: {
@@ -87,31 +105,9 @@ export class PostsResolver {
         },
       };
     }
-    return new Promise(async (resolve, reject) =>
-      createReadStream()
-        .pipe(createWriteStream(__dirname + `/../images/${filename}`))
-        .on('finish', async () => {
-          const post = await Posts.insert({
-            description,
-            photoPath: filename,
-            user,
-          });
-          const recentPost = await Posts.findOne({
-            where: { id: post.generatedMaps[0].id },
-          });
-          if (!recentPost) {
-            return {
-              error: {
-                message: 'failed to insert post',
-              },
-            };
-          }
-          user.posts = [...user.posts, recentPost];
-          return resolve({
-            recentPost,
-          });
-        })
-        .on('error', () => reject(false))
-    );
+
+    return {
+      post: newPost,
+    };
   }
 }

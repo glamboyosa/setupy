@@ -9,6 +9,7 @@ import { createConnection } from 'typeorm';
 import { HelloResolver } from './resolvers/helloResolver';
 import { UserResolver } from './resolvers/userResolver';
 import { PostsResolver } from './resolvers/postsResolver';
+import { context } from './utils/context';
 (async () => {
   const app = express();
   config();
@@ -27,7 +28,7 @@ import { PostsResolver } from './resolvers/postsResolver';
       resolvers: [HelloResolver, UserResolver, PostsResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res }),
+    context: ({ req, res }: context) => ({ req, res }),
   });
   apolloServer.applyMiddleware({ app, cors: false });
   const port = process.env.PORT || 4000;

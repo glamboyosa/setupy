@@ -3,7 +3,5 @@ fragment Post on Posts {
   description
   photoPath
   votes
-  user {
-    username
-  }
+  username
 }

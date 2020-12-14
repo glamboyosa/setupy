@@ -84,7 +84,9 @@ const Posts = () => {
                 Logout
               </NavButton>
             )}
-            <NavButton>Upload</NavButton>
+            <NavButton onClick={() => router.push('/uploads')}>
+              Upload
+            </NavButton>
           </NavItems>
           <Label htmlFor='checkbox' spellCheck={spellCheckk} />
         </Nav>

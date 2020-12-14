@@ -11,8 +11,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
 };
 
 export type Query = {
@@ -25,7 +23,7 @@ export type Query = {
 
 
 export type QueryGetPostsByUserArgs = {
-  id: Scalars['Float'];
+  username: Scalars['String'];
 };
 
 export type UserResponse = {
@@ -44,16 +42,6 @@ export type User = {
   id: Scalars['Int'];
   email: Scalars['String'];
   username: Scalars['String'];
-  posts: Array<Posts>;
-};
-
-export type Posts = {
-  __typename?: 'Posts';
-  id: Scalars['Int'];
-  description: Scalars['String'];
-  photoPath: Scalars['String'];
-  user: User;
-  votes: Scalars['Float'];
 };
 
 export type PostsResponse = {
@@ -61,6 +49,15 @@ export type PostsResponse = {
   error?: Maybe<Error>;
   posts?: Maybe<Array<Posts>>;
   post?: Maybe<Posts>;
+};
+
+export type Posts = {
+  __typename?: 'Posts';
+  id: Scalars['Int'];
+  description: Scalars['String'];
+  photoPath: Scalars['String'];
+  username: Scalars['String'];
+  votes: Scalars['Float'];
 };
 
 export type Mutation = {
@@ -97,9 +94,9 @@ export type MutationChangePasswordArgs = {
 
 
 export type MutationCreatePostsArgs = {
-  userId: Scalars['Float'];
+  username: Scalars['String'];
   description: Scalars['String'];
-  picture: Scalars['Upload'];
+  picture: Scalars['String'];
 };
 
 export type UserInput = {
@@ -108,14 +105,9 @@ export type UserInput = {
   email: Scalars['String'];
 };
 
-
 export type PostFragment = (
   { __typename?: 'Posts' }
-  & Pick<Posts, 'id' | 'description' | 'photoPath' | 'votes'>
-  & { user: (
-    { __typename?: 'User' }
-    & Pick<User, 'username'>
-  ) }
+  & Pick<Posts, 'id' | 'description' | 'photoPath' | 'votes' | 'username'>
 );
 
 export type ChangePasswordMutationVariables = Exact<{
@@ -130,9 +122,9 @@ export type ChangePasswordMutation = (
 );
 
 export type CreatePostMutationVariables = Exact<{
-  picture: Scalars['Upload'];
+  picture: Scalars['String'];
   description: Scalars['String'];
-  userId: Scalars['Float'];
+  username: Scalars['String'];
 }>;
 
 
@@ -212,17 +204,13 @@ export type GetPostsQuery = (
       & Pick<Error, 'message'>
     )>, posts?: Maybe<Array<(
       { __typename?: 'Posts' }
-      & Pick<Posts, 'id' | 'description' | 'photoPath' | 'votes'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'username'>
-      ) }
+      & PostFragment
     )>> }
   ) }
 );
 
 export type GetPostsByUserQueryVariables = Exact<{
-  id: Scalars['Float'];
+  username: Scalars['String'];
 }>;
 
 
@@ -254,9 +242,7 @@ export const PostFragmentDoc = gql`
   description
   photoPath
   votes
-  user {
-    username
-  }
+  username
 }
     `;
 export const ChangePasswordDocument = gql`
@@ -291,8 +277,8 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const CreatePostDocument = gql`
-    mutation CreatePost($picture: Upload!, $description: String!, $userId: Float!) {
-  CreatePosts(picture: $picture, description: $description, userId: $userId) {
+    mutation CreatePost($picture: String!, $description: String!, $username: String!) {
+  CreatePosts(picture: $picture, description: $description, username: $username) {
     error {
       message
     }
@@ -319,7 +305,7 @@ export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, C
  *   variables: {
  *      picture: // value for 'picture'
  *      description: // value for 'description'
- *      userId: // value for 'userId'
+ *      username: // value for 'username'
  *   },
  * });
  */
@@ -467,17 +453,11 @@ export const GetPostsDocument = gql`
       message
     }
     posts {
-      id
-      description
-      photoPath
-      votes
-      user {
-        username
-      }
+      ...Post
     }
   }
 }
-    `;
+    ${PostFragmentDoc}`;
 
 /**
  * __useGetPostsQuery__
@@ -504,8 +484,8 @@ export type GetPostsQueryHookResult = ReturnType<typeof useGetPostsQuery>;
 export type GetPostsLazyQueryHookResult = ReturnType<typeof useGetPostsLazyQuery>;
 export type GetPostsQueryResult = Apollo.QueryResult<GetPostsQuery, GetPostsQueryVariables>;
 export const GetPostsByUserDocument = gql`
-    query GetPostsByUser($id: Float!) {
-  GetPostsByUser(id: $id) {
+    query GetPostsByUser($username: String!) {
+  GetPostsByUser(username: $username) {
     error {
       message
     }
@@ -528,7 +508,7 @@ export const GetPostsByUserDocument = gql`
  * @example
  * const { data, loading, error } = useGetPostsByUserQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      username: // value for 'username'
  *   },
  * });
  */

@@ -4,13 +4,7 @@ query GetPosts {
       message
     }
     posts {
-      id
-      description
-      photoPath
-      votes
-      user {
-        username
-      }
+      ...Post
     }
   }
 }

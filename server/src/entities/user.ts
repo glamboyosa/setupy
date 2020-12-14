@@ -24,8 +24,4 @@ export class User extends BaseEntity {
   @Field()
   @Column({ length: 100 })
   username: string;
-
-  @Field(() => [Posts])
-  @OneToMany(() => Posts, (post) => post.user)
-  posts: Posts[];
 }
