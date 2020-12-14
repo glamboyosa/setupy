@@ -3,7 +3,7 @@ query GetPostsByUser($username: String!) {
     error {
       message
     }
-    post {
+    posts {
       ...Post
     }
   }

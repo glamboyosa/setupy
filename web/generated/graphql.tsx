@@ -17,8 +17,14 @@ export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   Me?: Maybe<UserResponse>;
+  GetPostById: PostsResponse;
   GetPosts: PostsResponse;
   GetPostsByUser: PostsResponse;
+};
+
+
+export type QueryGetPostByIdArgs = {
+  id: Scalars['Float'];
 };
 
 
@@ -192,6 +198,25 @@ export type RegisterMutation = (
   & Pick<Mutation, 'Register'>
 );
 
+export type GetPostByIdQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type GetPostByIdQuery = (
+  { __typename?: 'Query' }
+  & { GetPostById: (
+    { __typename?: 'PostsResponse' }
+    & { error?: Maybe<(
+      { __typename?: 'Error' }
+      & Pick<Error, 'message'>
+    )>, post?: Maybe<(
+      { __typename?: 'Posts' }
+      & PostFragment
+    )> }
+  ) }
+);
+
 export type GetPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -221,10 +246,10 @@ export type GetPostsByUserQuery = (
     & { error?: Maybe<(
       { __typename?: 'Error' }
       & Pick<Error, 'message'>
-    )>, post?: Maybe<(
+    )>, posts?: Maybe<Array<(
       { __typename?: 'Posts' }
       & PostFragment
-    )> }
+    )>> }
   ) }
 );
 
@@ -446,6 +471,44 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const GetPostByIdDocument = gql`
+    query GetPostById($id: Float!) {
+  GetPostById(id: $id) {
+    error {
+      message
+    }
+    post {
+      ...Post
+    }
+  }
+}
+    ${PostFragmentDoc}`;
+
+/**
+ * __useGetPostByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPostByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPostByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPostByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPostByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPostByIdQuery, GetPostByIdQueryVariables>) {
+        return Apollo.useQuery<GetPostByIdQuery, GetPostByIdQueryVariables>(GetPostByIdDocument, baseOptions);
+      }
+export function useGetPostByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPostByIdQuery, GetPostByIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetPostByIdQuery, GetPostByIdQueryVariables>(GetPostByIdDocument, baseOptions);
+        }
+export type GetPostByIdQueryHookResult = ReturnType<typeof useGetPostByIdQuery>;
+export type GetPostByIdLazyQueryHookResult = ReturnType<typeof useGetPostByIdLazyQuery>;
+export type GetPostByIdQueryResult = Apollo.QueryResult<GetPostByIdQuery, GetPostByIdQueryVariables>;
 export const GetPostsDocument = gql`
     query GetPosts {
   GetPosts {
@@ -489,7 +552,7 @@ export const GetPostsByUserDocument = gql`
     error {
       message
     }
-    post {
+    posts {
       ...Post
     }
   }

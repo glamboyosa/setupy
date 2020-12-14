@@ -1,46 +1,42 @@
-import Link from 'next/link';
-import Head from 'next/head';
 import { NextSeo } from 'next-seo';
-import { useState, useContext, useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useContext, useState } from 'react';
+import { NavButton } from '../../../components/button.style';
 import {
   PrimaryHeading,
   SecondaryHeading,
-} from '../../components/header.style';
-import { LinkToPages } from '../../components/links.style';
-import withApollo from '../../libs/withApollo';
-import {
-  CenterPosts,
-  Image,
-  DownButton,
-  EitherSideofPost,
-  Post,
-  ShareButton,
-  UpButton,
-  Page,
-  MarginTopImage,
-} from '../../components/posts.style';
-import { Input, Label, Nav, NavItems } from '../../components/nav.style';
-import { NavButton } from '../../components/button.style';
-import { Context } from '../../libs/userProvider';
-import { useGetPostsQuery, useLogoutMutation } from '../../generated/graphql';
+} from '../../../components/header.style';
+import { LinkToPages } from '../../../components/links.style';
+import { Input, Label, Nav, NavItems } from '../../../components/nav.style';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const Posts = () => {
-  console.log(process.env.NODE_ENV === 'development');
+import {
+  CenterPosts,
+  EitherSideofPost,
+  Image,
+  MarginTopImage,
+  Page,
+  Post,
+  ShareButton,
+} from '../../../components/posts.style';
+import {
+  useGetPostsByUserQuery,
+  useLogoutMutation,
+} from '../../../generated/graphql';
+import { Context } from '../../../libs/userProvider';
+import withApollo from '../../../libs/withApollo';
+const PostsByUser = () => {
   const [spellCheckk, setSpellCheck] = useState(false);
   const [webShareError, setWebShareError] = useState<string | null>(null);
   const [logoutMutation, { loading }] = useLogoutMutation();
-  const { data } = useGetPostsQuery();
-  const [emptyPosts, setEmptyPosts] = useState(false);
   const router = useRouter();
+  const { username } = router.query;
+  const { data } = useGetPostsByUserQuery({
+    variables: { username: username as string },
+  });
   const { user, setUserHandler } = useContext(Context);
-  useEffect(() => {
-    if (data!.GetPosts!.posts!.length < 1 && !loading) {
-      setEmptyPosts(true);
-    }
-  }, [data]);
-
   const logoutHandler = () => {
     logoutMutation();
     setUserHandler(null);
@@ -57,20 +53,6 @@ const Posts = () => {
       setWebShareError("Oops. Sharing isn't supported in your browser");
     }
   };
-  if (emptyPosts) {
-    return (
-      <Page>
-        <CenterPosts>
-          <SecondaryHeading>
-            looks like no one's posted anything yet.
-          </SecondaryHeading>
-          <Link href='/uploads'>
-            <LinkToPages>Be the first to upload</LinkToPages>
-          </Link>
-        </CenterPosts>
-      </Page>
-    );
-  }
   const notify = (error: string) =>
     toast.error(error, {
       position: 'top-center',
@@ -88,10 +70,10 @@ const Posts = () => {
   return (
     <>
       <Head>
-        <title>Setupy - Posts🔥</title>
+        <title>Setupy - Posts by {username}🔥</title>
       </Head>
       <NextSeo
-        title='Setupy - Posts🔥'
+        title={`Setupy - ${username} Posts 🔥`}
         openGraph={{
           url:
             process.env.NODE_ENV === 'development'
@@ -152,13 +134,10 @@ const Posts = () => {
           <PrimaryHeading>See the hottest posts 🔥</PrimaryHeading>
         </CenterPosts>
         {data && !loading ? (
-          data!.GetPosts!.posts!.map((el) => (
+          data!.GetPostsByUser!.posts!.map((el) => (
             <CenterPosts>
               <Post>
                 <EitherSideofPost>
-                  <UpButton spellCheck={false} />
-                  <div style={{ fontSize: '1.5rem' }}>{el.votes}</div>
-                  <DownButton spellCheck={false} />
                   <NavButton
                     onClick={() => webShareHandler(el.id, el.username)}
                   >
@@ -246,4 +225,4 @@ const Posts = () => {
   );
 };
 
-export default withApollo({ ssr: true })(Posts);
+export default withApollo({ ssr: true })(PostsByUser);

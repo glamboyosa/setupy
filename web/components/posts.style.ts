@@ -39,7 +39,7 @@ export const Post = styled.div`
   box-shadow: 0.4rem 1rem 1rem var(--black);
 `;
 export const ShareButton = styled(IoMdShare)`
-  font-size: 3rem;
+  font-size: 5rem;
 `;
 export const EitherSideofPost = styled.div`
   display: flex;

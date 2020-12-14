@@ -8,6 +8,20 @@ import { createWriteStream } from 'fs';
 @Resolver()
 export class PostsResolver {
   @Query(() => PostsResponse)
+  async GetPostById(@Arg('id') id: number) {
+    const post = await Posts.findOne({ where: { id } });
+    if (!post) {
+      return {
+        error: {
+          message: 'Cannot find post',
+        },
+      };
+    }
+    return {
+      post,
+    };
+  }
+  @Query(() => PostsResponse)
   async GetPosts() {
     const posts = await Posts.find();
     if (!posts) {
@@ -26,6 +40,7 @@ export class PostsResolver {
     let posts: Posts[];
     try {
       const userPosts = await Posts.find({ where: { username } });
+      console.log(userPosts);
       const user = await User.findOne({ where: { username } });
       if (!user) {
         return {
@@ -50,7 +65,7 @@ export class PostsResolver {
       };
     }
     return {
-      post: posts,
+      posts,
     };
   }
   @Mutation(() => PostsResponse)
