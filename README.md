@@ -13,6 +13,7 @@ A web application that allows users to upload their dev setups + a small descrip
 - Express
 - TypeORM
 - PostgreSQL
+- Cloudinary
 
 ### Credit
 
