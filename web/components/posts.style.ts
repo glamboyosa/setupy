@@ -4,21 +4,27 @@ export const Page = styled.div`
   background-color: var(--white-shade);
   position: relative;
 `;
-export const UpButton = styled.div`
+export const UpButton = styled.a`
   margin-top: 1rem;
   width: 0;
   height: 0;
-  border-left: 1.5rem solid transparent;
-  border-right: 1.5rem solid transparent;
-  border-bottom: 1.5rem solid
-    ${(props) => (props.spellCheck ? '#360ccc' : '#3a3b3c')};
+  border-left: 2rem solid transparent;
+  border-right: 2rem solid transparent;
+  border-bottom: 2rem solid #3a3b3c;
+  &:active {
+    border-bottom: 2rem solid
+      ${(props) => (props.spellCheck ? '#360ccc' : '#3a3b3c')};
+  }
 `;
-export const DownButton = styled.div`
+export const DownButton = styled.a`
   width: 0;
   height: 0;
-  border-left: 1.5rem solid transparent;
-  border-right: 1.5rem solid transparent;
-  border-top: 1.5rem solid ${(props) => (props.spellCheck ? '#f00' : '#3a3b3c')};
+  border-left: 2rem solid transparent;
+  border-right: 2rem solid transparent;
+  border-top: 2rem solid #3a3b3c;
+  &:active {
+    border-top: 2rem solid ${(props) => (props.spellCheck ? '#f00' : '#3a3b3c')};
+  }
 `;
 export const CenterPosts = styled.div`
   display: flex;

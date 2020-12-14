@@ -74,6 +74,7 @@ export type Mutation = {
   ForgotPassword?: Maybe<Scalars['Boolean']>;
   ChangePassword?: Maybe<Scalars['Boolean']>;
   CreatePosts: PostsResponse;
+  VotePost?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -103,6 +104,12 @@ export type MutationCreatePostsArgs = {
   username: Scalars['String'];
   description: Scalars['String'];
   picture: Scalars['String'];
+};
+
+
+export type MutationVotePostArgs = {
+  type: Scalars['String'];
+  id: Scalars['Float'];
 };
 
 export type UserInput = {
@@ -184,6 +191,17 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'Logout'>
+);
+
+export type VotePostMutationVariables = Exact<{
+  id: Scalars['Float'];
+  type: Scalars['String'];
+}>;
+
+
+export type VotePostMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'VotePost'>
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -439,6 +457,37 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const VotePostDocument = gql`
+    mutation VotePost($id: Float!, $type: String!) {
+  VotePost(id: $id, type: $type)
+}
+    `;
+export type VotePostMutationFn = Apollo.MutationFunction<VotePostMutation, VotePostMutationVariables>;
+
+/**
+ * __useVotePostMutation__
+ *
+ * To run a mutation, you first call `useVotePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVotePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [votePostMutation, { data, loading, error }] = useVotePostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useVotePostMutation(baseOptions?: Apollo.MutationHookOptions<VotePostMutation, VotePostMutationVariables>) {
+        return Apollo.useMutation<VotePostMutation, VotePostMutationVariables>(VotePostDocument, baseOptions);
+      }
+export type VotePostMutationHookResult = ReturnType<typeof useVotePostMutation>;
+export type VotePostMutationResult = Apollo.MutationResult<VotePostMutation>;
+export type VotePostMutationOptions = Apollo.BaseMutationOptions<VotePostMutation, VotePostMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($email: String!, $password: String!, $username: String!) {
   Register(UserInput: {email: $email, password: $password, username: $username})

@@ -15,7 +15,6 @@ import {
   DownButton,
   EitherSideofPost,
   Post,
-  ShareButton,
   UpButton,
   Page,
   MarginTopImage,
@@ -23,24 +22,37 @@ import {
 import { Input, Label, Nav, NavItems } from '../../components/nav.style';
 import { NavButton } from '../../components/button.style';
 import { Context } from '../../libs/userProvider';
-import { useGetPostsQuery, useLogoutMutation } from '../../generated/graphql';
+import {
+  useGetPostsQuery,
+  useLogoutMutation,
+  useVotePostMutation,
+} from '../../generated/graphql';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const Posts = () => {
-  console.log(process.env.NODE_ENV === 'development');
   const [spellCheckk, setSpellCheck] = useState(false);
+  const [upvoteColor, setUpvoteColor] = useState(false);
+  const [downvoteColor, setDownvoteColor] = useState(false);
   const [webShareError, setWebShareError] = useState<string | null>(null);
   const [logoutMutation, { loading }] = useLogoutMutation();
-  const { data } = useGetPostsQuery();
+  const { data, refetch } = useGetPostsQuery();
   const [emptyPosts, setEmptyPosts] = useState(false);
   const router = useRouter();
   const { user, setUserHandler } = useContext(Context);
+  const [
+    postMutation,
+    { data: voteData, loading: voteLoading },
+  ] = useVotePostMutation();
   useEffect(() => {
     if (data!.GetPosts!.posts!.length < 1 && !loading) {
       setEmptyPosts(true);
     }
   }, [data]);
-
+  useEffect(() => {
+    if (voteData?.VotePost) {
+      refetch();
+    }
+  }, [voteData]);
   const logoutHandler = () => {
     logoutMutation();
     setUserHandler(null);
@@ -57,6 +69,19 @@ const Posts = () => {
       setWebShareError("Oops. Sharing isn't supported in your browser");
     }
   };
+  const votesHandler = (id: number, type: 'upvote' | 'downvote') => {
+    if (type === 'upvote') {
+      setUpvoteColor(!upvoteColor);
+      setDownvoteColor(false);
+      console.log(id, type);
+      postMutation({ variables: { id, type } });
+    } else if (type === 'downvote') {
+      setDownvoteColor(!downvoteColor);
+      setUpvoteColor(false);
+      console.log(id, type);
+      postMutation({ variables: { id, type } });
+    }
+  };
   if (emptyPosts) {
     return (
       <Page>
@@ -71,6 +96,7 @@ const Posts = () => {
       </Page>
     );
   }
+
   const notify = (error: string) =>
     toast.error(error, {
       position: 'top-center',
@@ -84,6 +110,10 @@ const Posts = () => {
     });
   if (webShareError) {
     notify(webShareError);
+    setWebShareError(null);
+  }
+  if (voteData?.VotePost === null) {
+    notify('there was a problem voting please try again');
   }
   return (
     <>
@@ -151,14 +181,22 @@ const Posts = () => {
         <CenterPosts>
           <PrimaryHeading>See the hottest posts 🔥</PrimaryHeading>
         </CenterPosts>
-        {data && !loading ? (
-          data!.GetPosts!.posts!.map((el) => (
-            <CenterPosts>
-              <Post>
+        <CenterPosts>
+          {data && !loading ? (
+            data!.GetPosts!.posts!.map((el) => (
+              <Post key={el.id}>
                 <EitherSideofPost>
-                  <UpButton spellCheck={false} />
+                  <UpButton
+                    aria-disabled={voteLoading}
+                    onClick={() => votesHandler(el.id, 'upvote')}
+                    spellCheck={upvoteColor}
+                  />
                   <div style={{ fontSize: '1.5rem' }}>{el.votes}</div>
-                  <DownButton spellCheck={false} />
+                  <DownButton
+                    aria-disabled={voteLoading}
+                    onClick={() => votesHandler(el.id, 'downvote')}
+                    spellCheck={downvoteColor}
+                  />
                   <NavButton
                     onClick={() => webShareHandler(el.id, el.username)}
                   >
@@ -175,72 +213,72 @@ const Posts = () => {
                   </Link>
                 </EitherSideofPost>
               </Post>
+            ))
+          ) : (
+            <CenterPosts>
+              <svg
+                width='55'
+                height='80'
+                viewBox='0 0 55 80'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='#034245'
+              >
+                <g transform='matrix(1 0 0 -1 0 80)'>
+                  <rect width='10' height='20' rx='3'>
+                    <animate
+                      attributeName='height'
+                      begin='0s'
+                      dur='4.3s'
+                      values='20;45;57;80;64;32;66;45;64;23;66;13;64;56;34;34;2;23;76;79;20'
+                      calcMode='linear'
+                      repeatCount='indefinite'
+                    />
+                  </rect>
+                  <rect x='15' width='10' height='80' rx='3'>
+                    <animate
+                      attributeName='height'
+                      begin='0s'
+                      dur='2s'
+                      values='80;55;33;5;75;23;73;33;12;14;60;80'
+                      calcMode='linear'
+                      repeatCount='indefinite'
+                    />
+                  </rect>
+                  <rect x='30' width='10' height='50' rx='3'>
+                    <animate
+                      attributeName='height'
+                      begin='0s'
+                      dur='1.4s'
+                      values='50;34;78;23;56;23;34;76;80;54;21;50'
+                      calcMode='linear'
+                      repeatCount='indefinite'
+                    />
+                  </rect>
+                  <rect x='45' width='10' height='30' rx='3'>
+                    <animate
+                      attributeName='height'
+                      begin='0s'
+                      dur='2s'
+                      values='30;45;13;80;56;72;45;76;34;23;67;30'
+                      calcMode='linear'
+                      repeatCount='indefinite'
+                    />
+                  </rect>
+                  <rect x='15' width='10' height='80' rx='3'>
+                    <animate
+                      attributeName='height'
+                      begin='0s'
+                      dur='2s'
+                      values='80;55;33;5;75;23;73;33;12;14;60;80'
+                      calcMode='linear'
+                      repeatCount='indefinite'
+                    />
+                  </rect>
+                </g>
+              </svg>
             </CenterPosts>
-          ))
-        ) : (
-          <CenterPosts>
-            <svg
-              width='55'
-              height='80'
-              viewBox='0 0 55 80'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='#034245'
-            >
-              <g transform='matrix(1 0 0 -1 0 80)'>
-                <rect width='10' height='20' rx='3'>
-                  <animate
-                    attributeName='height'
-                    begin='0s'
-                    dur='4.3s'
-                    values='20;45;57;80;64;32;66;45;64;23;66;13;64;56;34;34;2;23;76;79;20'
-                    calcMode='linear'
-                    repeatCount='indefinite'
-                  />
-                </rect>
-                <rect x='15' width='10' height='80' rx='3'>
-                  <animate
-                    attributeName='height'
-                    begin='0s'
-                    dur='2s'
-                    values='80;55;33;5;75;23;73;33;12;14;60;80'
-                    calcMode='linear'
-                    repeatCount='indefinite'
-                  />
-                </rect>
-                <rect x='30' width='10' height='50' rx='3'>
-                  <animate
-                    attributeName='height'
-                    begin='0s'
-                    dur='1.4s'
-                    values='50;34;78;23;56;23;34;76;80;54;21;50'
-                    calcMode='linear'
-                    repeatCount='indefinite'
-                  />
-                </rect>
-                <rect x='45' width='10' height='30' rx='3'>
-                  <animate
-                    attributeName='height'
-                    begin='0s'
-                    dur='2s'
-                    values='30;45;13;80;56;72;45;76;34;23;67;30'
-                    calcMode='linear'
-                    repeatCount='indefinite'
-                  />
-                </rect>
-                <rect x='15' width='10' height='80' rx='3'>
-                  <animate
-                    attributeName='height'
-                    begin='0s'
-                    dur='2s'
-                    values='80;55;33;5;75;23;73;33;12;14;60;80'
-                    calcMode='linear'
-                    repeatCount='indefinite'
-                  />
-                </rect>
-              </g>
-            </svg>
-          </CenterPosts>
-        )}
+          )}
+        </CenterPosts>
       </Page>
     </>
   );

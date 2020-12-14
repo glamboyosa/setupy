@@ -125,4 +125,24 @@ export class PostsResolver {
       post: newPost,
     };
   }
+  @Mutation(() => Boolean, { nullable: true })
+  async VotePost(
+    @Arg('id') id: number,
+    @Arg('type') type: 'upvote' | 'downvote'
+  ) {
+    const post = await Posts.findOne({ where: { id } });
+    if (!post) {
+      return null;
+    }
+    if (type === 'upvote') {
+      post.votes = post.votes + 1;
+      await post.save();
+      return true;
+    } else if (type === 'downvote') {
+      post.votes = post.votes - 1;
+      await post.save();
+      return true;
+    }
+    return true;
+  }
 }
