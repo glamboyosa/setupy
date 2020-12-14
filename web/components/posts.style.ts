@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { IoMdShare } from 'react-icons/io';
-import Image from 'next/image';
 export const Page = styled.div`
   background-color: var(--white-shade);
   position: relative;
@@ -34,6 +33,8 @@ export const CenterPosts = styled.div`
 export const Post = styled.div`
   display: flex;
   border-radius: 0.8rem;
+  width: auto;
+  max-width: 50rem;
   background-color: var(--white);
   box-shadow: 0.4rem 1rem 1rem var(--black);
 `;
@@ -55,7 +56,11 @@ export const EitherSideofPost = styled.div`
 `;
 export const MarginTopImage = styled.div`
   margin-top: 2rem;
+  text-align: center;
 `;
-export const DemoImage = styled(Image)`
+
+export const Image = styled.img`
   border-radius: 0.8rem;
+  width: 100%;
+  height: auto;
 `;
