@@ -3,6 +3,7 @@ import { IoMdShare } from 'react-icons/io';
 import Image from 'next/image';
 export const Page = styled.div`
   background-color: var(--white-shade);
+  position: relative;
 `;
 export const UpButton = styled.div`
   margin-top: 1rem;

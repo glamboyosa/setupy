@@ -1,7 +1,7 @@
 import { CenterInputs, Input } from '../components/input.style';
 import { useLoginMutation } from '../generated/graphql';
 import Head from 'next/head';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   ButtonsParent,
   PrimaryButton,
@@ -15,14 +15,32 @@ import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { Context } from '../libs/userProvider';
 type ReferrerisRegister = boolean | undefined;
 const Login = ({
   referrerIsRegister,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
+  const { setUserHandler } = useContext(Context);
   const [loginMutation, { data, loading }] = useLoginMutation();
   const [email, setEmail] = useState<string>();
+  const [errorState, setErrorState] = useState(true);
   const [password, setPassword] = useState<string>();
+  useEffect(() => {
+    if (data?.Login.user && !referrerIsRegister) {
+      setUserHandler(data.Login.user);
+      router.back();
+    } else if (data?.Login.user && referrerIsRegister) {
+      setUserHandler(data.Login.user);
+      router.push('/posts');
+    }
+  }, [data]);
+  useEffect(() => {
+    if (data?.Login.error && errorState) {
+      notify(data!.Login.error!.message!);
+      setErrorState(false);
+    }
+  }, [data]);
   const submitHandler = (e: React.SyntheticEvent) => {
     e.preventDefault();
     loginMutation({ variables: { email: email!, password: password! } });
@@ -38,14 +56,7 @@ const Login = ({
       draggable: true,
       progress: undefined,
     });
-  if (data?.Login.error) {
-    notify(data.Login.error.message);
-  }
-  if (data?.Login.user && !referrerIsRegister) {
-    router.back();
-  } else if (data?.Login.user && referrerIsRegister) {
-    router.push('/');
-  }
+
   return (
     <>
       <Head>

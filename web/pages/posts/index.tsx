@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import Head from 'next/head';
 import { NextSeo } from 'next-seo';
+import { useState, useContext } from 'react';
+import { useRouter } from 'next/router';
 import {
   PrimaryHeading,
   SecondaryHeading,
 } from '../../components/header.style';
 import { LinkToPages } from '../../components/links.style';
+import withApollo from '../../libs/withApollo';
 import {
   CenterPosts,
   DemoImage,
@@ -17,12 +20,25 @@ import {
   Page,
   MarginTopImage,
 } from '../../components/posts.style';
-import React from 'react';
+import { Input, Label, Nav, NavItems } from '../../components/nav.style';
+import { NavButton } from '../../components/button.style';
+import { Context } from '../../libs/userProvider';
+import { useLogoutMutation } from '../../generated/graphql';
 const Posts = () => {
+  console.log(process.env.NODE_ENV === 'development');
+  const [spellCheckk, setSpellCheck] = useState(false);
+  const [logoutMutation, { loading }] = useLogoutMutation();
+  const router = useRouter();
+  const { user, setUserHandler } = useContext(Context);
+  console.log(user);
   const description = [
     'A super big Mac setup with 55" monitor!',
     "Who says Window's isn't cool",
   ];
+  const logoutHandler = () => {
+    logoutMutation();
+    setUserHandler(null);
+  };
   return (
     <>
       <Head>
@@ -31,7 +47,10 @@ const Posts = () => {
       <NextSeo
         title='Setupy - Posts🔥'
         openGraph={{
-          url: window.location.href,
+          url:
+            process.env.NODE_ENV === 'development'
+              ? 'http://localhost:3000/posts'
+              : 'https://setupy.vercel.app/posts',
           title: 'Setupy - Posts🔥',
           images: [
             {
@@ -43,6 +62,32 @@ const Posts = () => {
         twitter={{ cardType: 'summary_large_image' }}
       />
       <Page>
+        <Nav spellCheck={spellCheckk}>
+          <Link href='/'>
+            <SecondaryHeading style={{ whiteSpace: 'nowrap' }}>
+              Setupy🔥
+            </SecondaryHeading>
+          </Link>
+          <Input
+            checked={spellCheckk}
+            onChange={() => setSpellCheck(!spellCheckk)}
+            id='checkbox'
+          />
+          <NavItems spellCheck={spellCheckk}>
+            {user && (
+              <img src='/user-image-with-black-background.svg' width='7%' />
+            )}
+            {!user ? (
+              <NavButton onClick={() => router.push('/login')}>Login</NavButton>
+            ) : (
+              <NavButton disabled={loading} onClick={logoutHandler}>
+                Logout
+              </NavButton>
+            )}
+            <NavButton>Upload</NavButton>
+          </NavItems>
+          <Label htmlFor='checkbox' spellCheck={spellCheckk} />
+        </Nav>
         <CenterPosts>
           <PrimaryHeading>See the hottest posts 🔥</PrimaryHeading>
         </CenterPosts>
@@ -74,4 +119,5 @@ const Posts = () => {
     </>
   );
 };
-export default Posts;
+
+export default withApollo({ ssr: true })(Posts);

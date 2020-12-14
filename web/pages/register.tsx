@@ -1,7 +1,7 @@
 import { CenterInputs, Input } from '../components/input.style';
 import { useRegisterMutation } from '../generated/graphql';
 import Head from 'next/head';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ButtonsParent,
   PrimaryButton,
@@ -20,6 +20,13 @@ const Register = () => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [username, setUsername] = useState<string>();
+  const [errorState, setErrorState] = useState(true);
+  useEffect(() => {
+    if (data?.Register === null && errorState) {
+      notify('uh oh something went wrong. please try again 😢 ');
+      setErrorState(false);
+    }
+  }, [data]);
   const submitHandler = (e: React.SyntheticEvent) => {
     e.preventDefault();
     registerMutation({
@@ -37,10 +44,7 @@ const Register = () => {
       draggable: true,
       progress: undefined,
     });
-  if (data?.Register === null) {
-    notify('uh oh something went wrong. please try again 😢 ');
-    console.log(data?.Register);
-  }
+
   if (data?.Register) {
     router.back();
   }

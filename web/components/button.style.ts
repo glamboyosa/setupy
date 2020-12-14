@@ -38,3 +38,14 @@ export const PrimaryButton = styled.button`
     top: -0.5rem;
   }
 `;
+export const NavButton = styled.button`
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+  border: none;
+  background-color: var(--int-blue);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--white);
+  border-radius: 8px;
+  cursor: pointer;
+`;

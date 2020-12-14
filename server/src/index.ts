@@ -15,7 +15,7 @@ import { PostsResolver } from './resolvers/postsResolver';
   app.use(
     cors({
       credentials: true,
-      origin: ['http://localhost:3000', 'http://localhost:8000/graphql'],
+      origin: ['https://setupy.vercel.app', 'http://localhost:3000'],
     })
   );
   app.use(cookieParser());
