@@ -26,6 +26,7 @@ import { context } from './utils/context';
     type: 'postgres',
     host: __prod__ ? process.env.DB_HOST : 'localhost',
     port: 5432,
+    database: process.env.DB,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     synchronize: true,
