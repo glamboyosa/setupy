@@ -1,23 +1,23 @@
+import { compare, genSalt, hash } from 'bcryptjs';
+import { verify } from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 import {
-  Query,
-  Mutation,
-  InputType,
-  Field,
-  Ctx,
-  Resolver,
   Arg,
+  Ctx,
+  Field,
+  InputType,
+  Mutation,
+  Query,
+  Resolver,
 } from 'type-graphql';
 import { User } from '../entities/user';
-import { hash, genSalt, compare } from 'bcryptjs';
-import { context } from '../utils/context';
 import { COOKIE_NAME, __prod__ } from '../utils/constants';
+import { context } from '../utils/context';
+import { UserResponse } from '../utils/response';
 import {
   createAccessToken,
   forgotPasswordToken as forgotPasswordTokenHandler,
 } from '../utils/tokens';
-import { verify } from 'jsonwebtoken';
-import { UserResponse } from '../utils/response';
-import nodemailer from 'nodemailer';
 @InputType()
 class UserInput {
   @Field()
@@ -106,7 +106,6 @@ export class UserResolver {
   }
   @Query(() => UserResponse, { nullable: true })
   async Me(@Ctx() { req }: context) {
-    console.log(req.cookies);
     const { jid } = req.cookies;
     if (!jid) {
       return null;

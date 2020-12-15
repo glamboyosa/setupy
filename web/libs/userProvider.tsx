@@ -1,4 +1,4 @@
-import { useState, createContext } from 'react';
+import { createContext, useState } from 'react';
 import { User } from '../generated/graphql';
 type userType = Pick<User, 'id' | 'email' | 'username'> | null;
 type userProviderProps = {

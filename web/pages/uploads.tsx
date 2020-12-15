@@ -1,23 +1,22 @@
-import Modal from 'react-modal';
 import Head from 'next/head';
-import { useMutation } from 'mey';
-import { useState, useRef, useContext } from 'react';
-import { Input, CenterInputs } from '../components/input.style';
-import { ToastContainer, toast } from 'react-toastify';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useContext, useRef, useState } from 'react';
+import Modal from 'react-modal';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   ButtonsParent,
   PrimaryButton,
   SecondaryButton,
 } from '../components/button.style';
-import { Page } from '../components/posts.style';
-import { useRouter } from 'next/router';
-import { useCreatePostMutation } from '../generated/graphql';
-import withApollo from '../libs/withApollo';
-import { Context } from '../libs/userProvider';
 import { SecondaryHeading } from '../components/header.style';
-import Link from 'next/link';
+import { CenterInputs, Input } from '../components/input.style';
 import { LinkToPages } from '../components/links.style';
+import { Page } from '../components/posts.style';
+import { useCreatePostMutation } from '../generated/graphql';
+import { Context } from '../libs/userProvider';
+import withApollo from '../libs/withApollo';
 const Uploads = () => {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement | null>(null);
@@ -29,8 +28,7 @@ const Uploads = () => {
   ] = useCreatePostMutation();
   const submitHandler = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    console.log(fileInput.current?.files![0]);
-    console.log(description);
+
     const formData = new FormData();
     formData.append('file', fileInput.current!.files![0]);
     formData.append('upload_preset', 'my_upload_preset');
@@ -40,7 +38,6 @@ const Uploads = () => {
     })
       .then((resp) => resp.json())
       .then((cloudinaryData) => {
-        console.log(cloudinaryData);
         createPostMutation({
           variables: {
             username: user!.username,
@@ -64,7 +61,6 @@ const Uploads = () => {
     });
 
   if (data?.CreatePosts.error) {
-    console.log(data?.CreatePosts.error);
     notify('error', data?.CreatePosts.error?.message);
   }
 

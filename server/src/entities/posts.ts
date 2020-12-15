@@ -1,12 +1,5 @@
-import { ObjectType, Field, Int } from 'type-graphql';
-import {
-  BaseEntity,
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-} from 'typeorm';
-import { User } from './user';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @ObjectType()
 @Entity('posts')
 export class Posts extends BaseEntity {

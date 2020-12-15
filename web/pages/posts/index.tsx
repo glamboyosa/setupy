@@ -1,35 +1,33 @@
-import Link from 'next/link';
-import Head from 'next/head';
 import { NextSeo } from 'next-seo';
-import { useState, useContext, useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { NavButton } from '../../components/button.style';
 import {
   PrimaryHeading,
   SecondaryHeading,
 } from '../../components/header.style';
 import { LinkToPages } from '../../components/links.style';
-import withApollo from '../../libs/withApollo';
+import { Input, Label, Nav, NavItems } from '../../components/nav.style';
 import {
   CenterPosts,
-  Image,
-  DownButton,
   EitherSideofPost,
-  Post,
-  UpButton,
-  Page,
+  Image,
   MarginTopImage,
+  Page,
+  Post,
 } from '../../components/posts.style';
-import { Input, Label, Nav, NavItems } from '../../components/nav.style';
-import { NavButton } from '../../components/button.style';
-import { Context } from '../../libs/userProvider';
 import {
   useGetPostsQuery,
   useLogoutMutation,
   useMeQuery,
   useVotePostMutation,
 } from '../../generated/graphql';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Context } from '../../libs/userProvider';
+import withApollo from '../../libs/withApollo';
 const Posts = () => {
   const [spellCheckk, setSpellCheck] = useState(false);
   const [upvoteColor, setUpvoteColor] = useState(false);
@@ -56,7 +54,6 @@ const Posts = () => {
     logoutMutation();
   };
   const webShareHandler = async (id: number, username: string) => {
-    console.log(id);
     try {
       await navigator.share({
         title: 'Setupy - Posts🔥',
@@ -71,12 +68,12 @@ const Posts = () => {
     if (type === 'upvote') {
       setUpvoteColor(!upvoteColor);
       setDownvoteColor(false);
-      console.log(id, type);
+
       postMutation({ variables: { id, type } });
     } else if (type === 'downvote') {
       setDownvoteColor(!downvoteColor);
       setUpvoteColor(false);
-      console.log(id, type);
+
       postMutation({ variables: { id, type } });
     }
   };
@@ -100,7 +97,7 @@ const Posts = () => {
       </Page>
     );
   }
-  console.log(error);
+
   const notify = (message: string, type: 'success' | 'error') =>
     toast(message, {
       position: 'top-center',

@@ -38,7 +38,7 @@ export class PostsResolver {
     let posts: Posts[];
     try {
       const userPosts = await Posts.find({ where: { username } });
-      console.log(userPosts);
+
       const user = await User.findOne({ where: { username } });
       if (!user) {
         return {
@@ -94,7 +94,7 @@ export class PostsResolver {
       }
 
       user = existingUser;
-      console.log(user);
+
       const post = await Posts.insert({
         description,
         photoPath: picture,

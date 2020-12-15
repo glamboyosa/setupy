@@ -1,21 +1,21 @@
-import { CenterInputs, Input } from '../components/input.style';
-import { useLoginMutation } from '../generated/graphql';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
-import React, { useState, useEffect, useContext } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useContext, useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   ButtonsParent,
   PrimaryButton,
   SecondaryButton,
 } from '../components/button.style';
 import { SecondaryHeading } from '../components/header.style';
+import { CenterInputs, Input } from '../components/input.style';
 import { LinkToPages } from '../components/links.style';
-import withApollo from '../libs/withApollo';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useLoginMutation } from '../generated/graphql';
 import { Context } from '../libs/userProvider';
+import withApollo from '../libs/withApollo';
 type ReferrerisRegister = boolean | undefined;
 const Login = ({
   referrerIsRegister,

@@ -1,19 +1,19 @@
-import { CenterInputs, Input } from '../components/input.style';
-import { useRegisterMutation } from '../generated/graphql';
 import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   ButtonsParent,
   PrimaryButton,
   SecondaryButton,
 } from '../components/button.style';
 import { SecondaryHeading } from '../components/header.style';
+import { CenterInputs, Input } from '../components/input.style';
 import { LinkToPages } from '../components/links.style';
+import { useRegisterMutation } from '../generated/graphql';
 import withApollo from '../libs/withApollo';
-import Link from 'next/link';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useRouter } from 'next/router';
 const Register = () => {
   const [registerMutation, { data, loading }] = useRegisterMutation();
   const router = useRouter();

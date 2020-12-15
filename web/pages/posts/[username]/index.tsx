@@ -3,6 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { NavButton } from '../../../components/button.style';
 import {
   PrimaryHeading,
@@ -10,8 +12,6 @@ import {
 } from '../../../components/header.style';
 import { LinkToPages } from '../../../components/links.style';
 import { Input, Label, Nav, NavItems } from '../../../components/nav.style';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import {
   CenterPosts,
   EitherSideofPost,
@@ -19,7 +19,6 @@ import {
   MarginTopImage,
   Page,
   Post,
-  ShareButton,
 } from '../../../components/posts.style';
 import {
   useGetPostsByUserQuery,
@@ -42,7 +41,6 @@ const PostsByUser = () => {
     setUserHandler(null);
   };
   const webShareHandler = async (id: number, username: string) => {
-    console.log(id);
     try {
       await navigator.share({
         title: 'Setupy - Posts🔥',

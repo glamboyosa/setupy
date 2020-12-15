@@ -1,3 +1,12 @@
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { NavButton } from '../../../components/button.style';
+import { SecondaryHeading } from '../../../components/header.style';
+import { LinkToPages } from '../../../components/links.style';
 import {
   CenterPosts,
   EitherSideofPost,
@@ -6,17 +15,8 @@ import {
   Page,
   Post,
 } from '../../../components/posts.style';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import withApollo from '../../../libs/withApollo';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { NavButton } from '../../../components/button.style';
-import React, { useState } from 'react';
 import { useGetPostByIdQuery } from '../../../generated/graphql';
-import { SecondaryHeading } from '../../../components/header.style';
-import { LinkToPages } from '../../../components/links.style';
+import withApollo from '../../../libs/withApollo';
 const PostById = () => {
   const router = useRouter();
   const [webShareError, setWebShareError] = useState<string | null>(null);

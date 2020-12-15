@@ -1,16 +1,16 @@
-import 'reflect-metadata';
-import express from 'express';
-import { config } from 'dotenv';
 import { ApolloServer } from 'apollo-server-express';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { config } from 'dotenv';
+import express from 'express';
+import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
 import { HelloResolver } from './resolvers/helloResolver';
-import { UserResolver } from './resolvers/userResolver';
 import { PostsResolver } from './resolvers/postsResolver';
-import { context } from './utils/context';
+import { UserResolver } from './resolvers/userResolver';
 import { __prod__ } from './utils/constants';
+import { context } from './utils/context';
 (async () => {
   const app = express();
   config();
@@ -24,7 +24,7 @@ import { __prod__ } from './utils/constants';
   app.use(express.static('images'));
   await createConnection({
     type: 'postgres',
-    host: !__prod__ ? process.env.DB_HOST : 'localhost',
+    host: __prod__ ? process.env.DB_HOST : 'localhost',
     port: 5432,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,

@@ -1,15 +1,15 @@
+import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
-import {
-  Header,
-  PrimaryHeading,
-  SecondaryHeading,
-} from '../components/header.style';
 import {
   ButtonsParent,
   PrimaryButton,
   SecondaryButton,
 } from '../components/button.style';
-import { useRouter } from 'next/dist/client/router';
+import {
+  Header,
+  PrimaryHeading,
+  SecondaryHeading,
+} from '../components/header.style';
 
 function Home() {
   const router = useRouter();

@@ -1,16 +1,16 @@
-import { CenterInputs, Input } from '../../components/input.style';
-import { useForgotPasswordMutation } from '../../generated/graphql';
 import Head from 'next/head';
 import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   ButtonsParent,
   PrimaryButton,
   SecondaryButton,
 } from '../../components/button.style';
 import { SecondaryHeading } from '../../components/header.style';
+import { CenterInputs, Input } from '../../components/input.style';
+import { useForgotPasswordMutation } from '../../generated/graphql';
 import withApollo from '../../libs/withApollo';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 const Index = () => {
   const [
     forgotPasswordMutation,
