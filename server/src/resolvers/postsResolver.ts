@@ -1,10 +1,8 @@
-import { Arg, Resolver, Mutation, Query } from 'type-graphql';
-import { GraphQLUpload } from 'graphql-upload';
-import { PostsResponse } from '../utils/response';
-import { Upload } from '../utils/context';
-import { User } from '../entities/user';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Posts } from '../entities/posts';
-import { createWriteStream } from 'fs';
+import { User } from '../entities/user';
+import { PostsResponse } from '../utils/response';
+import { getConnection } from 'typeorm';
 @Resolver()
 export class PostsResolver {
   @Query(() => PostsResponse)
@@ -24,7 +22,7 @@ export class PostsResolver {
   @Query(() => PostsResponse)
   async GetPosts() {
     const posts = await Posts.find();
-    if (!posts) {
+    if (!posts || posts.length < 1) {
       return {
         error: {
           message: 'Register and be the first one to add some posts',
@@ -135,12 +133,10 @@ export class PostsResolver {
       return null;
     }
     if (type === 'upvote') {
-      post.votes = post.votes + 1;
-      await post.save();
+      await getConnection().getRepository(Posts).increment({ id }, 'votes', 1);
       return true;
     } else if (type === 'downvote') {
-      post.votes = post.votes - 1;
-      await post.save();
+      await getConnection().getRepository(Posts).decrement({ id }, 'votes', 1);
       return true;
     }
     return true;

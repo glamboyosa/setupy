@@ -10,6 +10,7 @@ import { HelloResolver } from './resolvers/helloResolver';
 import { UserResolver } from './resolvers/userResolver';
 import { PostsResolver } from './resolvers/postsResolver';
 import { context } from './utils/context';
+import { __prod__ } from './utils/constants';
 (async () => {
   const app = express();
   config();
@@ -21,7 +22,18 @@ import { context } from './utils/context';
   );
   app.use(cookieParser());
   app.use(express.static('images'));
-  await createConnection();
+  await createConnection({
+    type: 'postgres',
+    host: !__prod__ ? process.env.DB_HOST : 'localhost',
+    port: 5432,
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    synchronize: true,
+    logging: false,
+    entities: ['src/entities/**/*.ts'],
+    migrations: ['src/migration/**/*.ts'],
+    subscribers: ['src/subscriber/**/*.ts'],
+  });
   const apolloServer = new ApolloServer({
     introspection: true,
     schema: await buildSchema({

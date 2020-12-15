@@ -25,6 +25,7 @@ import { Context } from '../../libs/userProvider';
 import {
   useGetPostsQuery,
   useLogoutMutation,
+  useMeQuery,
   useVotePostMutation,
 } from '../../generated/graphql';
 import { ToastContainer, toast } from 'react-toastify';
@@ -34,9 +35,11 @@ const Posts = () => {
   const [upvoteColor, setUpvoteColor] = useState(false);
   const [downvoteColor, setDownvoteColor] = useState(false);
   const [webShareError, setWebShareError] = useState<string | null>(null);
-  const [logoutMutation, { loading }] = useLogoutMutation();
-  const { data, refetch } = useGetPostsQuery();
-  const [emptyPosts, setEmptyPosts] = useState(false);
+  const [logoutMutation, { data: logoutData, loading }] = useLogoutMutation();
+  const { data, refetch, error } = useGetPostsQuery({
+    fetchPolicy: 'cache-and-network',
+  });
+  const { data: meData } = useMeQuery({ fetchPolicy: 'cache-and-network' });
   const router = useRouter();
   const { user, setUserHandler } = useContext(Context);
   const [
@@ -44,18 +47,13 @@ const Posts = () => {
     { data: voteData, loading: voteLoading },
   ] = useVotePostMutation();
   useEffect(() => {
-    if (data!.GetPosts!.posts!.length < 1 && !loading) {
-      setEmptyPosts(true);
-    }
-  }, [data]);
-  useEffect(() => {
     if (voteData?.VotePost) {
       refetch();
+      notify('successful. how about sharing the post ? 😉', 'success');
     }
   }, [voteData]);
   const logoutHandler = () => {
     logoutMutation();
-    setUserHandler(null);
   };
   const webShareHandler = async (id: number, username: string) => {
     console.log(id);
@@ -82,7 +80,13 @@ const Posts = () => {
       postMutation({ variables: { id, type } });
     }
   };
-  if (emptyPosts) {
+  if (meData?.Me?.user) {
+    setUserHandler(meData.Me.user);
+  }
+  if (logoutData?.Logout) {
+    setUserHandler(null);
+  }
+  if (data?.GetPosts.error) {
     return (
       <Page>
         <CenterPosts>
@@ -96,11 +100,11 @@ const Posts = () => {
       </Page>
     );
   }
-
-  const notify = (error: string) =>
-    toast.error(error, {
+  console.log(error);
+  const notify = (message: string, type: 'success' | 'error') =>
+    toast(message, {
       position: 'top-center',
-      type: 'error',
+      type,
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -109,12 +113,13 @@ const Posts = () => {
       progress: undefined,
     });
   if (webShareError) {
-    notify(webShareError);
+    notify(webShareError, 'error');
     setWebShareError(null);
   }
   if (voteData?.VotePost === null) {
-    notify('there was a problem voting please try again');
+    notify('there was a problem voting please try again', 'error');
   }
+
   return (
     <>
       <Head>
@@ -186,7 +191,7 @@ const Posts = () => {
             data!.GetPosts!.posts!.map((el) => (
               <Post key={el.id}>
                 <EitherSideofPost>
-                  <UpButton
+                  {/* <UpButton
                     aria-disabled={voteLoading}
                     onClick={() => votesHandler(el.id, 'upvote')}
                     spellCheck={upvoteColor}
@@ -196,7 +201,7 @@ const Posts = () => {
                     aria-disabled={voteLoading}
                     onClick={() => votesHandler(el.id, 'downvote')}
                     spellCheck={downvoteColor}
-                  />
+                  /> */}
                   <NavButton
                     onClick={() => webShareHandler(el.id, el.username)}
                   >
@@ -209,74 +214,13 @@ const Posts = () => {
                   </MarginTopImage>
                   <SecondaryHeading>{el.description}</SecondaryHeading>
                   <Link href={`/posts/${el.username}`}>
-                    <LinkToPages>post by glamboyosa</LinkToPages>
+                    <LinkToPages>post by {el.username}</LinkToPages>
                   </Link>
                 </EitherSideofPost>
               </Post>
             ))
           ) : (
-            <CenterPosts>
-              <svg
-                width='55'
-                height='80'
-                viewBox='0 0 55 80'
-                xmlns='http://www.w3.org/2000/svg'
-                fill='#034245'
-              >
-                <g transform='matrix(1 0 0 -1 0 80)'>
-                  <rect width='10' height='20' rx='3'>
-                    <animate
-                      attributeName='height'
-                      begin='0s'
-                      dur='4.3s'
-                      values='20;45;57;80;64;32;66;45;64;23;66;13;64;56;34;34;2;23;76;79;20'
-                      calcMode='linear'
-                      repeatCount='indefinite'
-                    />
-                  </rect>
-                  <rect x='15' width='10' height='80' rx='3'>
-                    <animate
-                      attributeName='height'
-                      begin='0s'
-                      dur='2s'
-                      values='80;55;33;5;75;23;73;33;12;14;60;80'
-                      calcMode='linear'
-                      repeatCount='indefinite'
-                    />
-                  </rect>
-                  <rect x='30' width='10' height='50' rx='3'>
-                    <animate
-                      attributeName='height'
-                      begin='0s'
-                      dur='1.4s'
-                      values='50;34;78;23;56;23;34;76;80;54;21;50'
-                      calcMode='linear'
-                      repeatCount='indefinite'
-                    />
-                  </rect>
-                  <rect x='45' width='10' height='30' rx='3'>
-                    <animate
-                      attributeName='height'
-                      begin='0s'
-                      dur='2s'
-                      values='30;45;13;80;56;72;45;76;34;23;67;30'
-                      calcMode='linear'
-                      repeatCount='indefinite'
-                    />
-                  </rect>
-                  <rect x='15' width='10' height='80' rx='3'>
-                    <animate
-                      attributeName='height'
-                      begin='0s'
-                      dur='2s'
-                      values='80;55;33;5;75;23;73;33;12;14;60;80'
-                      calcMode='linear'
-                      repeatCount='indefinite'
-                    />
-                  </rect>
-                </g>
-              </svg>
-            </CenterPosts>
+            <CenterPosts></CenterPosts>
           )}
         </CenterPosts>
       </Page>
