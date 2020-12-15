@@ -1,5 +1,5 @@
 # Setupy
-** old monorepo structure. switched to single repos, no difference btw them. [web](https://github.com/glamboyosa/setupy-web) [GraphQL API](https://github.com/glamboyosa/setupy-api)
+** old monorepo structure. switched to single repos, no difference btw them. [web](https://github.com/glamboyosa/setupy-web) [GraphQL API](https://github.com/glamboyosa/setupy-api)**
 A web application that allows users to upload their dev setups + a small description and view other dev setups.
 
 ## Built With
